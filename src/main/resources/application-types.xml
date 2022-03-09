@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="HCMSuperset" format="csv">
+      <types:shape format="weave" example="examples/hcminputstruct (2).txt"><![CDATA[%dw 2.0
+
+type HCMSuperset = Array<{|  Employee_Id: String,   First_Name: String,   Middle_Name: String,   Last_Name: String,   Payroll_Status: String,   HR_Status: String,   Employee_Type: String,   Hourly_Salaried: String,   Regular_Temporary: String,   Full_PartTime: String,   Gender: String,   Cost_Center: String,   Department_Name: String,   Profit_Center: String,   Business_Unit: String,   Business_Unit_Name: String,   Company: String,   AccountId_UserId: String,   Account_Name: String,   Job_Title: String,   Account_Role: String,   Account_Type: String,   Date_of_Birth: String,   Job_Group: String,   Job_Code: String,   Job_Function: String,   Need_LSC_email: String,   File_Run_Date: String,   Home_Address_Line_1: String,   Home_Address_Line_2: String,   Home_Address_Line_3: String,   Home_City: String,   Home_State: String,   Home_Zip_Code: String,   Home_Country: String,   Work_Location_Code: String,   Work_Location_Name: String,   Work_Location_Address_1: String,   Work_Location_Address_2: String,   Work_Location_City: String,   Work_Location_County: String,   Work_Location_State: String,   Work_Location_Postal: String,   Work_Location_Country: String,   Work_Location_Region: String,   Work_Email_Address: String,   Work_Phone: String,   Work_Phone_Extension: String,   Fax: String,   Fax_Extension: String,   Business_Phone: String,   Business_Phone_Extension: String,   Assistant_Phone: String,   Assistant_Phone_Extension: String,   Preferred_First_Name: String,   Preferred_Last_Name: String,   Preferred_Middle_Name: String,   HR_Contact_Email: String,   Hired_on_Date: String,   Latest_Hire_Date: String,   Termination_Date: String,   Termination_Reason: String,   Supervisor_Flag: String,   Supervisor_ManagerId: String,   Manager_Level: String,   Manager_Level_Description: String,   Emp_Approver_ID: String,   SAP_Company: String,   Sector: String,   Sector_Description: String,   Working_at_Home: String,   Accomplishment_Description: String,   External_Employer: String,   PHRMANAGER: String,   PREVIOUS_MONTH: String,   PREVIOUS_MONTHS_YEAR: String,   Country_of_Employees_Company: String,   Employee_Level: String,   DEPARTMENT_ID: String,   Worker_type: String|}> {"isQuotedString": "false",
+"header": "true",
+"headerLineNumber": "0",
+"separator": "|"}
+
+]]></types:shape>
+      <types:properties>
+        <types:property name="headerLineNumber" value="0"/>
+        <types:property name="header" value="true"/>
+        <types:property name="isQuotedString" value="false"/>
+        <types:property name="separator" value="|"/>
+      </types:properties>
+    </types:type>
+    <types:type name="FinData" format="csv">
+      <types:shape format="weave" example="examples/hcmoutputstruct (2).txt"><![CDATA[%dw 2.0
+
+type FinData = Array<{|  COMPANY: String,   COMPANY_DESCR: String,   DIVISION: String,   DIVISION_DESCR: String,   COST_CENTER: String,   COST_CENTER_DESCR: String,   LOCATION: String,   LOCATION_DESCR: String,   LAST_NAME: String,   FIRST_NAME: String,   MIDDLE_NAME: String,   EMPL_STATUS: String,   EMPLOYEE_TYPE: String,   BUSINESS_TITLE: String,   JOB_TITLE: String,   BUS_PHONE: String,   BUS_PHONE_EXTENSION: String,   ASSISTANT_PHONE_EXTENSION: String,   WORK_PHONE_EXTENSION: String,   EMPLID: String,   PREFEREED_LAST_NAME: String,   PREFEREED_FIRST_NAME: String,   PREFEREED_MIDDLE_NAME: String,   SUPERVISOR_ID: String,   TERMINATION_DT: String,   RRD_ALT_LOC: String,   EMAIL_ADDR: String|}> {"isQuotedString": "true",
+"quote": "\"",
+"header": "true",
+"headerLineNumber": "0",
+"separator": "|"}
+
+]]></types:shape>
+      <types:properties>
+        <types:property name="quote" value="&quot;"/>
+        <types:property name="headerLineNumber" value="0"/>
+        <types:property name="header" value="true"/>
+        <types:property name="isQuotedString" value="true"/>
+        <types:property name="separator" value="|"/>
+      </types:properties>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#a1bec6fc-4c95-4ee8-9ea3-7ce61370c72c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="HCMSuperset[]"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="FinData[]"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#b2c91b99-2348-48eb-8b60-b27af832606a">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="HCMSuperset"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="9388d303-070e-4d4d-a249-6a1daad21fb3" />
+	<flow name="hcm_to_finweb_appFlow" doc:id="04eb22c0-55e4-4197-9b7a-2ee19f7722f7" >
+		<file:listener doc:name="On New or Updated File" doc:id="b2c91b99-2348-48eb-8b60-b27af832606a" config-ref="File_Config" directory="C:\Users\gires\Desktop\Work\HCM_demographic\check" timeBetweenSizeCheckUnit="MICROSECONDS" outputMimeType="application/csv; separator=|" autoDelete="true" moveToDirectory="C:\Users\gires\Desktop\Work\HCM_demographic\Archive">
+			<scheduling-strategy >
+				<fixed-frequency frequency="1" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</file:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="8befed7e-cc74-4f93-be88-fa06f02aa627" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="a1bec6fc-4c95-4ee8-9ea3-7ce61370c72c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+import leftPad from dw::core::Strings
+
+output application/csv
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	COMPANY_DESCR: payload01.Company,
+	DIVISION: payload01.Business_Unit,
+	DIVISION_DESCR: payload01.Business_Unit_Name,
+	COST_CENTER: payload01.Cost_Center,
+	COST_CENTER_DESCR: payload01.Department_Name,
+	LOCATION: leftPad(payload01.Work_Location_Code,5),
+	LOCATION_DESCR: payload01.Work_Location_Name,
+	LAST_NAME: payload01.Last_Name,
+	FIRST_NAME: payload01.First_Name,
+	MIDDLE_NAME: payload01.Middle_Name,
+	EMPL_STATUS: payload01.HR_Status,
+	EMPLOYEE_TYPE: payload01.Employee_Type,
+	BUSINESS_TITLE: payload01.Job_Title,
+	JOB_TITLE: payload01.Job_Title,
+	BUS_PHONE: payload01.Business_Phone,
+	BUS_PHONE_EXTENSION: payload01.Business_Phone_Extension,
+	ASSISTANT_PHONE_EXTENSION: payload01.Assistant_Phone_Extension,
+	WORK_PHONE_EXTENSION: payload01.Work_Phone_Extension,
+	EMPLID: payload01.Employee_Id,
+	PREFEREED_LAST_NAME: payload01.Preferred_Last_Name,
+	PREFEREED_FIRST_NAME: payload01.Preferred_First_Name,
+	PREFEREED_MIDDLE_NAME: payload01.Preferred_Middle_Name,
+	SUPERVISOR_ID: payload01.Supervisor_ManagerId,
+	TERMINATION_DT: payload01.Termination_Date,
+	EMAIL_ADDR: payload01.Work_Email_Address
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="abdafbd1-9547-4c0b-8461-be7606e95e48" message="#[payload]"/>
+		<file:write doc:name="Write" doc:id="a28d6b15-111a-4cf7-88cd-706a3e490733" path="C:\Users\gires\Desktop\Work\HCM_demographic\output\out.txt" config-ref="File_Config"/>
+	</flow>
+</mule>
